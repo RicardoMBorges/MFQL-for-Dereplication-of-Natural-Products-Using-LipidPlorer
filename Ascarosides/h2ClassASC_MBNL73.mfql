@@ -1,0 +1,21 @@
+# Identify MBAscaroside2Class # with checking  the precursor mass, MBAscaroside2Class (e.g. MB-asc-dC9/mbas#3) #
+
+QUERYNAME = MBAscaroside2ClassNL73;
+DEFINE prMBAsc2Class = 'C[17..31] H[25..53] O[8..9]' WITH DBR = (5,5.5), CHG = -1;
+DEFINE prAscs = 'C[3] H[5] O[2]' WITH CHG = -1;
+
+IDENTIFY
+	# mark ICAsc2Class precursor mass
+	prMBAsc2Class IN MS1- AND
+	prAscs IN MS2-
+
+REPORT 
+	MASS = "%4.4f" % (prMBAsc2Class.mass);
+	ERROR = "%2.2fppm" % (prMBAsc2Class.errppm);
+	SUMCOMPOSITION = prMBAsc2Class.chemsc;
+	NAME = "prMBAsc2Class [%d:%d:%d]" % (prMBAsc2Class.chemsc[C] - 17 + 1, prMBAsc2Class.chemsc[db] - 4, prMBAsc2Class.chemsc[O] - 8);
+	INTENS = sumIntensity(prMBAsc2Class.intensity);
+	INTENSm73 = prAscs.intensity;;
+    
+################ end script ##################
+

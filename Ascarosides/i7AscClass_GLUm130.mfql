@@ -1,0 +1,25 @@
+# Identify GLUAscaroside7Class with checking  the precursor mass, GLUAscaroside7Class #
+
+QUERYNAME = GLUAscaroside7ClassNL130;
+DEFINE prGLUAsc7Class = 'C[19..27] H[33..49] O[10..11]' WITH DBR = (3,3.5), CHG = -1;
+DEFINE prAscs = 'C[6] H[10] O[3]' WITH CHG = 0;
+
+IDENTIFY
+	# mark GLUAsc7Class precursor mass
+	prGLUAsc7Class IN MS1- AND
+	prAscs IN MS2-
+
+SUCHTHAT
+	prGLUAsc7Class.chemsc[O] - 10 + 0 >= prGLUAsc7Class.chemsc[C] - 19 + 0
+
+
+REPORT 
+	MASS = "%4.4f" % (prGLUAsc7Class.mass);
+	ERROR = "%2.2fppm" % (prGLUAsc7Class.errppm);
+	SUMCOMPOSITION = prGLUAsc7Class.chemsc;
+	NAME = "prGLUAsc7Class [%d:%d:%d]" % (prGLUAsc7Class.chemsc[C] - 19 + 1, prGLUAsc7Class.chemsc[db] - 3, prGLUAsc7Class.chemsc[O] - 10);
+	INTENS = sumIntensity(prGLUAsc7Class.intensity);
+	NLSPIS = prAscs.intensity;;
+
+################ end script ##################
+

@@ -1,0 +1,27 @@
+# Identify Ascaroside3Class # with checking  the precursor mass, Ascaroside3Class  (e.g. Glu-asc-C6-MK/ascr#4)#
+
+QUERYNAME = Ascaroside3Class;
+DEFINE prAsc3Class = 'C[16..30] H[27..56] O[9..11]' WITH DBR = (3,3.5), CHG = -1;
+DEFINE Asc3Classchain = 'C[11..24] H[19..45] O[5..6]' WITH DBR = (2,2.5),CHG = -1;
+
+IDENTIFY
+	# mark Asc3Class precursor mass
+	prAsc3Class IN MS1- AND
+	Asc3Classchain IN MS2-
+
+REPORT 
+	MASS = "%4.4f" % (prAsc3Class.mass);
+	ERROR = "%2.2fppm" % (prAsc3Class.errppm);
+	SUMCOMPOSITION = prAsc3Class.chemsc;
+	NAME = "prAsc3Class [%d:%d:%d]" % (prAsc3Class.chemsc[C] - 16 + 1, prAsc3Class.chemsc[db] - 3, prAsc3Class.chemsc[O] - 9);
+	INTENS = sumIntensity(prAsc3Class.intensity);
+    
+	MASSFrag1 = "%4.4f" % (Asc3Classchain.mass);
+	NAMEFrag1 = "Asc3Class [%d:%d:%d]" % (Asc3Classchain.chemsc[C] - 11 + 1, Asc3Classchain.chemsc[db] - 2, Asc3Classchain.chemsc[O] - 5);
+	INTENSFrag1 = sumIntensity(Asc3Classchain.intensity);
+	Difference1 = "%1.1f" % ((prAsc3Class.mass) - (Asc3Classchain));
+	SUMCOMPOSITIONFrag1 = (prAsc3Class.chemsc - Asc3Classchain.chemsc);
+	ERRORFrag1 = "%2.2fppm" % (Asc3Classchain.errppm);;
+    
+################ end script ##################
+

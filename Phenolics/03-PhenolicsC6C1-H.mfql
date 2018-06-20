@@ -1,0 +1,31 @@
+#################################################################
+# Identify PhenolicsC6C1 with checking  the precursor mass, PhenolicsC6C1 #
+#################################################################
+
+QUERYNAME = PhenolicsC6C1H;
+DEFINE prPHC6C1 = 'C[7..7] H[5..5] O[2..5]' WITH DBR = (5,5.5), CHG = -1;
+DEFINE PHC6C1CO2 = 'C[6..6] H[5..5] O[0..3]' WITH DBR = (3,4.5), CHG = -1;
+
+
+IDENTIFY
+
+	# mark PHC6C1 precursor mass
+	prPHC6C1 IN MS1- AND
+	PHC6C1CO2 IN MS2-	
+SUCHTHAT
+	prPHC6C1.chemsc[O] - 2 >= prPHC6C1.chemsc[C] - 7
+
+REPORT 
+	MASS = "%4.4f" % (prPHC6C1.mass);
+	ERROR = "%2.2fppm" % (prPHC6C1.errppm);
+	SUMCOMPOSITION = prPHC6C1.chemsc;
+	NAME = "prPHC6C1 [%d:%d:%d]" % (prPHC6C1.chemsc[C] - 7, prPHC6C1.chemsc[db] - 5, prPHC6C1.chemsc[O] - 2);	INTENS = sumIntensity(prPHC6C1.intensity);
+
+	MASSFrag1 = "%4.4f" % (PHC6C1CO2.mass);
+	NAMEFrag1 = "PHC6C1CO2 [%d:%d:%d]" % (PHC6C1CO2.chemsc[C] - 6, PHC6C1CO2.chemsc[db] - 3, PHC6C1CO2.chemsc[O] - 0);
+	INTENSFrag1 = sumIntensity(PHC6C1CO2.intensity);
+	Difference1 = "%1.1f" % ((prPHC6C1.mass) - (PHC6C1CO2.mass));
+	SUMCOMPOSITIONFrag1 = (prPHC6C1.chemsc - PHC6C1CO2.chemsc);
+	ERRORFrag1 = "%2.2fppm" % (PHC6C1CO2.errppm);;
+
+################ end script ##################

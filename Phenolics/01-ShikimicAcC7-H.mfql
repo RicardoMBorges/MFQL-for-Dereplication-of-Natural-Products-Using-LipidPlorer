@@ -1,0 +1,21 @@
+#############################################################
+# Identify ShikimicAcC7 with checking  the precursor mass, ShikimicAcC7 #
+#############################################################
+
+QUERYNAME = ShikimicAcC7H;
+DEFINE prSC7 = 'C[7..7] H[9..9] O[5..5]' WITH DBR = (3,3.5), CHG = -1;
+
+IDENTIFY
+
+	# mark SC7 precursor mass
+	prSC7 IN MS1-
+SUCHTHAT
+	prSC7.chemsc[O] - 5 >= prSC7.chemsc[C] - 7
+
+REPORT 
+	MASS = "%4.4f" % (prSC7.mass);
+	ERROR = "%2.2fppm" % (prSC7.errppm);
+	SUMCOMPOSITION = prSC7.chemsc;
+	NAME = "prSC7 [%d:%d:%d]" % (prSC7.chemsc[C] - 7, prSC7.chemsc[db] - 3, prSC7.chemsc[O] - 5);	INTENS = sumIntensity(prSC7.intensity);;
+
+################ end script ##################

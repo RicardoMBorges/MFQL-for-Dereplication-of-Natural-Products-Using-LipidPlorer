@@ -1,0 +1,25 @@
+# Identify MBAscaroside5Class with checking  the precursor mass, MBAscaroside5Class #
+
+QUERYNAME = MBAscaroside5Classm73;
+DEFINE prMBAsc5Class = 'C[24..38] H[30..58] O[8..9] N[1]' WITH DBR = (10,10.5), CHG = -1;
+DEFINE prAscs = 'C[3] H[5] O[2]' WITH CHG = -1;
+
+IDENTIFY
+	# mark MBAsc5Class precursor mass
+	prMBAsc5Class IN MS1- AND
+	prAscs IN MS2-
+
+SUCHTHAT
+	prMBAsc5Class.chemsc[O] - 8 + 0 >= prMBAsc5Class.chemsc[C] - 24 + 0
+
+
+REPORT 
+	MASS = "%4.4f" % (prMBAsc5Class.mass);
+	ERROR = "%2.2fppm" % (prMBAsc5Class.errppm);
+	SUMCOMPOSITION = prMBAsc5Class.chemsc;
+	NAME = "prMBAsc5Class [%d:%d:%d]" % (prMBAsc5Class.chemsc[C] - 24 + 1, prMBAsc5Class.chemsc[db] - 10, prMBAsc5Class.chemsc[O] - 8);
+	INTENS = sumIntensity(prMBAsc5Class.intensity);
+	INTENSm73 = prAscs.intensity;;
+
+################ end script ##################
+

@@ -1,0 +1,41 @@
+############################################################################################
+# Identify DiCafeoylShikimicAcidC6C3C7OMe with checking  the precursor mass, DiCafeoylShikimicAcidC6C3C7OMe #
+############################################################################################
+
+QUERYNAME = DiCafeoylShikimicAcidC6C3C7OMeH;
+DEFINE prDCSC6C3C7OMe = 'C[26..29] H[23..29] O[8..14]' WITH DBR = (14,14.5), CHG = -1;
+DEFINE prCSC6C3C7OMe = 'C[17..18] H[17..19] O[7..9]' WITH DBR = (9,9.5), CHG = -1;
+DEFINE prSC7 = 'C[7..7] H[11..11] O[6..6]' WITH DBR = (2,2.5), CHG = -1;
+
+IDENTIFY
+
+	# mark DCSC6C3C7OMe precursor mass
+	prDCSC6C3C7OMe IN MS1- AND
+	prCSC6C3C7OMe IN MS2- AND
+	prSC7 IN MS2-
+
+SUCHTHAT
+	prDCSC6C3C7OMe.chemsc[O] - 8 + 1 >= prDCSC6C3C7OMe.chemsc[C] - 25
+
+REPORT
+	MASS = "%4.4f" % (prDCSC6C3C7OMe.mass);
+	ERROR = "%2.2fppm" % (prDCSC6C3C7OMe.errppm);
+	SUMCOMPOSITION = prDCSC6C3C7OMe.chemsc;
+	NAME = "prDCSC6C3C7OMe [%d:%d:%d]" % (prDCSC6C3C7OMe.chemsc[C] - 26, prDCSC6C3C7OMe.chemsc[db] - 14, prDCSC6C3C7OMe.chemsc[O] - 8);
+	INTENS = sumIntensity(prDCSC6C3C7OMe.intensity);
+;
+#	MASSFrag1 = "%4.4f" % (prCSC6C3C7OMe.mass);;
+#	NAMEFrag1 = "prCSC6C3C7OMe [%d:%d:%d]" % (prCSC6C3C7OMe.chemsc[C] - 17, prCSC6C3C7OMe.chemsc[db] - 9, prCSC6C3C7OMe.chemsc[O] - 7);
+#	INTENSFrag1 = sumIntensity(prCSC6C3C7OMe.intensity);
+#	Difference1 = "%1.1f" % ((prDCSC6C3C7OMe.mass) - (prCSC6C3C7OMe.mass));
+#	SUMCOMPOSITIONFrag1 = (prDCSC6C3C7OMe.chemsc - prCSC6C3C7OMe.chemsc);
+#	ERRORFrag1 = "%2.2fppm" % (prCSC6C3C7OMe.errppm);
+
+#	MASSFrag2 = "%4.4f" % (prSC7.mass);
+#	NAMEFrag2 = "prSC7 [%d:%d:%d]" % (prSC7.chemsc[C] - 7, prSC7.chemsc[db] - 3, prSC7.chemsc[O] - 6);
+#	INTENSFrag2 = sumIntensity(prSC7.intensity);
+#	Difference2 = "%1.1f" % ((prCSC6C3C7OMe.mass) - (prSC7.mass));
+#	SUMCOMPOSITIONFrag2 = (prCSC6C3C7OMe.chemsc - prSC7.chemsc);
+#	ERRORFrag2 = "%2.2fppm" % (prSC7.errppm);;
+
+################ end script ##################

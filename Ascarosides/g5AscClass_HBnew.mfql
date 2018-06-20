@@ -1,0 +1,30 @@
+# Identify HBAscaroside5Class with checking  the precursor mass, HBAscaroside5Class #
+
+QUERYNAME = HBAscaroside5Class;
+DEFINE prHBAsc5Class = 'C[26..35] H[28..46] O[9..10] N[1]' WITH DBR = (13,13.5), CHG = -1;
+DEFINE prAsc5Class = 'C[19..33] H[24..53] O[7..8] N[1]' WITH DBR = (8,8.5), CHG = -1;
+
+IDENTIFY
+	# mark GLUAsc5Class precursor mass
+	prHBAsc5Class IN MS1- AND
+	prAsc5Class IN MS2-
+
+SUCHTHAT
+	prHBAsc5Class.chemsc[O] - 12 + 0 >= prHBAsc5Class.chemsc[C] - 25 + 0
+
+
+REPORT 
+	MASS = "%4.4f" % (prHBAsc5Class.mass);
+	ERROR = "%2.2fppm" % (prHBAsc5Class.errppm);
+	SUMCOMPOSITION = prHBAsc5Class.chemsc;
+	NAME = "prHBAsc5Class [%d:%d:%d]" % (prHBAsc5Class.chemsc[C] - 26 + 1, prHBAsc5Class.chemsc[db] - 13, prHBAsc5Class.chemsc[O] - 9);
+	INTENS = sumIntensity(prHBAsc5Class.intensity);
+
+	MASSFrag1 = "%4.4f" % (prAsc5Class.mass);
+	NAMEFrag1 = "prAsc5Class [%d:%d:%d]" % (prAsc5Class.chemsc[C] - 19 + 1, prAsc5Class.chemsc[db] - 8, prAsc5Class.chemsc[O] - 7);
+	INTENSFrag1 = sumIntensity(prAsc5Class.intensity);
+	Difference1 = "%1.1f" % ((prHBAsc5Class.mass) - (prAsc5Class));
+	SUMCOMPOSITIONFrag1 = (prHBAsc5Class.chemsc - prAsc5Class.chemsc);
+	ERRORFrag1 = "%2.2fppm" % (prAsc5Class.errppm);;
+
+################ end script ##################

@@ -1,0 +1,27 @@
+# Identify HBAscaroside1Class # with checking  the precursor mass, HBAscaroside1Class #
+
+QUERYNAME = HBAscaroside1Class;
+DEFINE prHBAsc1Class = 'C[17..31] H[21..49] O[7..9]' WITH DBR = (7,7.5), CHG = -1;
+DEFINE Asc1Class = 'C[10..24] H[17..45] O[6..7]' WITH DBR = (2,2.5), CHG = -1;
+
+IDENTIFY
+	# mark HBAsc1Class precursor mass
+	prHBAsc1Class IN MS1- AND
+	Asc1Class IN MS2-
+
+REPORT 
+	MASS = "%4.4f" % (prHBAsc1Class.mass);
+	ERROR = "%2.2fppm" % (prHBAsc1Class.errppm);
+	SUMCOMPOSITION = prHBAsc1Class.chemsc;
+	NAME = "prHBAsc1Class [%d:%d:%d]" % (prHBAsc1Class.chemsc[C] - 17 + 1, prHBAsc1Class.chemsc[db] - 7, prHBAsc1Class.chemsc[O] - 7);
+	INTENS = sumIntensity(prHBAsc1Class.intensity);
+        
+	MASSFrag1 = "%4.4f" % (Asc1Class.mass);
+	NAMEFrag1 = "Asc1Class [%d:%d:%d]" % (Asc1Class.chemsc[C] - 10 + 1, Asc1Class.chemsc[db] - 2, Asc1Class.chemsc[O] - 6);
+	INTENSFrag1 = sumIntensity(Asc1Class.intensity);
+	Difference1 = "%1.1f" % ((prHBAsc1Class.mass) - (Asc1Class.mass));
+	SUMCOMPOSITIONFrag1 = (prHBAsc1Class.chemsc - Asc1Class.chemsc);
+	ERRORFrag1 = "%2.2fppm" % (Asc1Class.errppm);;
+
+################ end script ##################
+

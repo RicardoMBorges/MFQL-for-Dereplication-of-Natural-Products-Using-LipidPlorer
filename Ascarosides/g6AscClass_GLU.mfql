@@ -1,0 +1,31 @@
+# Identify GLUAscaroside6Class with checking  the precursor mass, GLUAscaroside6Class #
+
+QUERYNAME = GLUAscaroside6Class;
+DEFINE prGLUAsc6Class = 'C[17..25] H[31..47] O[10..11]' WITH DBR = (2,2.5), CHG = -1;
+DEFINE prAsc6Class = 'C[11..25] H[21..49] O[5..6]' WITH DBR = (1,1.5), CHG = -1;
+
+IDENTIFY
+	# mark GLUAsc6Class precursor mass
+	prGLUAsc6Class IN MS1- AND
+	prAsc6Class IN MS2-
+
+SUCHTHAT
+	prGLUAsc6Class.chemsc[O] - 10 + 0 >= prGLUAsc6Class.chemsc[C] - 17 + 0
+
+
+REPORT 
+	MASS = "%4.4f" % (prGLUAsc6Class.mass);
+	ERROR = "%2.2fppm" % (prGLUAsc6Class.errppm);
+	SUMCOMPOSITION = prGLUAsc6Class.chemsc;
+	NAME = "prGLUAsc6Class [%d:%d:%d]" % (prGLUAsc6Class.chemsc[C] - 17 + 1, prGLUAsc6Class.chemsc[db] - 2, prGLUAsc6Class.chemsc[O] - 10);
+	INTENS = sumIntensity(prGLUAsc6Class.intensity);
+    
+	MASSFrag1 = "%4.4f" % (prAsc6Class.mass);
+	NAMEFrag1 = "prAsc6Class [%d:%d:%d]" % (prAsc6Class.chemsc[C] - 11 + 1, prAsc6Class.chemsc[db] - 1, prAsc6Class.chemsc[O] - 5);
+	INTENSFrag1 = sumIntensity(prAsc6Class.intensity);
+	Difference1 = "%1.1f" % ((prGLUAsc6Class.mass) - (prAsc6Class.mass));
+	SUMCOMPOSITIONFrag1 = (prGLUAsc6Class.chemsc - prAsc6Class.chemsc);
+	ERRORFrag1 = "%2.2fppm" % (prAsc6Class.errppm);;
+
+################ end script ##################
+

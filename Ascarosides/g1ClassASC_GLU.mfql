@@ -1,0 +1,26 @@
+# Identify GLUAscaroside1Class # with checking  the precursor mass, GLUAscaroside1Class #
+
+QUERYNAME = GLUAscaroside1Class;
+DEFINE GLUAsc1Class = 'C[16..26] H[27..47] O[11..12]' WITH DBR = (3,3.5), CHG = -1;
+DEFINE prAscschain = 'C[10..20] H[17..37] O[6..7]' WITH DBR = (2,2.5), CHG = -1;
+
+IDENTIFY
+	# mark  precursor mass
+	GLUAsc1Class IN MS1- AND
+	prAscschain IN MS2-
+
+REPORT 
+	MASS = "%4.4f" % (GLUAsc1Class.mass);
+	ERROR = "%2.2fppm" % (GLUAsc1Class.errppm);
+	SUMCOMPOSITION = GLUAsc1Class.chemsc;
+	NAME = "GLUAsc1Class [%d:%d:%d]" % (GLUAsc1Class.chemsc[C] - 16 + 1, GLUAsc1Class.chemsc[db] - 3, GLUAsc1Class.chemsc[O] - 11);
+	INTENS = sumIntensity(GLUAsc1Class.intensity);
+    
+	MASSFrag1 = "%4.4f" % (prAscschain.mass);
+	NAMEFrag1 = "prAscschain [%d:%d:%d]" % (prAscschain.chemsc[C] - 10 + 1, prAscschain.chemsc[db] - 2, prAscschain.chemsc[O] - 6);
+	INTENSFrag1 = sumIntensity(prAscschain.intensity);
+	Difference1 = "%1.1f" % ((GLUAsc1Class.mass) - (prAscschain.mass));
+	SUMCOMPOSITIONFrag1 = (GLUAsc1Class.chemsc - prAscschain.chemsc);
+	ERRORFrag1 = "%2.2fppm" % (prAscschain.errppm);;
+    
+################ end script ##################

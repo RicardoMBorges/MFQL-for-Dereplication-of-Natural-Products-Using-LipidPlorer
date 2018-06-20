@@ -1,0 +1,25 @@
+# Identify HBAscaroside7Class with checking  the precursor mass, HBAscaroside7Class #
+
+QUERYNAME = HBAscaroside7Classm73;
+DEFINE prHBAsc7Class = 'C[20..34] H[27..56] O[7..8]' WITH DBR = (7,7.5), CHG = -1;
+DEFINE prAscs = 'C[3] H[5] O[2]' WITH CHG = -1;
+
+IDENTIFY
+	# mark HBAsc7Class precursor mass
+	prHBAsc7Class IN MS1- AND
+	prAscs IN MS2-
+
+SUCHTHAT
+	prHBAsc7Class.chemsc[O] - 7 + 0 >= prHBAsc7Class.chemsc[C] - 20 + 0
+
+
+REPORT 
+	MASS = "%4.4f" % (prHBAsc7Class.mass);
+	ERROR = "%2.2fppm" % (prHBAsc7Class.errppm);
+	SUMCOMPOSITION = prHBAsc7Class.chemsc;
+	NAME = "prHBAsc7Class [%d:%d:%d]" % (prHBAsc7Class.chemsc[C] - 20 + 1, prHBAsc7Class.chemsc[db] - 7, prHBAsc7Class.chemsc[O] - 7);
+	INTENS = sumIntensity(prHBAsc7Class.intensity);
+	INTENSm73 = prAscs.intensity;;
+
+################ end script ##################
+

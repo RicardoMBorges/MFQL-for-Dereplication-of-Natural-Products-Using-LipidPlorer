@@ -1,0 +1,25 @@
+# Identify  with checking HBAscaroside5Class the precursor mass, HBAscaroside5Class #
+
+QUERYNAME = HBAscaroside5ClassNL130;
+DEFINE prHBAsc5Class = 'C[26..35] H[28..46] O[9..10] N[1]' WITH DBR = (13,13.5), CHG = -1;
+DEFINE prAscs = 'C[6] H[10] O[3]' WITH CHG = 0;
+
+IDENTIFY
+	# mark HBAsc5Class precursor mass
+	prHBAsc5Class IN MS1- AND
+	prAscs IN MS2-
+
+SUCHTHAT
+	prHBAsc5Class.chemsc[O] - 9 + 0 >= prHBAsc5Class.chemsc[C] - 26 + 0
+
+
+REPORT 
+	MASS = "%4.4f" % (prHBAsc5Class.mass);
+	ERROR = "%2.2fppm" % (prHBAsc5Class.errppm);
+	SUMCOMPOSITION = prHBAsc5Class.chemsc;
+	NAME = "prHBAsc5Class [%d:%d:%d]" % (prHBAsc5Class.chemsc[C] - 26 + 1, prHBAsc5Class.chemsc[db] - 13, prHBAsc5Class.chemsc[O] - 9);
+	INTENS = sumIntensity(prHBAsc5Class.intensity);
+	NLSPIS = prAscs.intensity;;
+
+################ end script ##################
+

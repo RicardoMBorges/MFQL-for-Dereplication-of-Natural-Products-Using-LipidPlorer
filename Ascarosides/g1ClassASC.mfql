@@ -1,0 +1,26 @@
+# Identify Ascaroside1Class # with checking  the precursor mass, Ascaroside1Class  (e.g. asc-C4/ascr#11, asc-C5/ascr#9, asc-C7/ascr#1, asc-C9/ascr10)#
+
+QUERYNAME = Ascaroside1Class;
+DEFINE Asc1Class = 'C[10..24] H[17..45] O[6..7]' WITH DBR = (2,2.5), CHG = -1;
+DEFINE prAscschain = 'C[4..18] H[7..35] O[3..4]' WITH DBR = (1,1.5), CHG = -1;
+
+IDENTIFY
+	# mark  precursor mass
+	Asc1Class IN MS1- AND
+	prAscschain IN MS2-
+
+REPORT 
+	MASS = "%4.4f" % (Asc1Class.mass);
+	ERROR = "%2.2fppm" % (Asc1Class.errppm);
+	SUMCOMPOSITION = Asc1Class.chemsc;
+	NAME = "Asc1Class [%d:%d:%d]" % (Asc1Class.chemsc[C] - 10 + 1, Asc1Class.chemsc[db] - 2, Asc1Class.chemsc[O] - 6);
+	INTENS = sumIntensity(Asc1Class.intensity);
+    
+	MASSFrag1 = "%4.4f" % (prAscschain.mass);
+	NAMEFrag1 = "prAscschain [%d:%d:%d]" % (prAscschain.chemsc[C] - 4 + 1, prAscschain.chemsc[db] - 1, prAscschain.chemsc[O] - 3);
+	INTENSFrag1 = sumIntensity(prAscschain.intensity);
+	Difference1 = "%1.1f" % ((Asc1Class.mass) - (prAscschain.mass));
+	SUMCOMPOSITIONFrag1 = (Asc1Class.chemsc - prAscschain.chemsc);
+	ERRORFrag1 = "%2.2fppm" % (prAscschain.errppm);;
+    
+################ end script ##################

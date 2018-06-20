@@ -1,0 +1,21 @@
+# Identify ICAscaroside2Class # with checking  the precursor mass, ICAscaroside2Class #
+QUERYNAME = ICAscaroside2Class;
+DEFINE prICAsc2Class = 'C[21..35] H[24..52] O[7..8] N[1]' WITH DBR = (10,10.5), CHG = -1;
+DEFINE prAsc2Class = 'C[12..26] H[19..47] O[6..7]' WITH DBR = (3,3.5), CHG = -1;
+
+IDENTIFY
+	# mark OSAsc2Class precursor mass
+	prICAsc2Class IN MS1- AND
+	prAsc2Class IN MS2-    
+REPORT 
+	MASS = "%4.4f" % (prICAsc2Class.mass);
+	ERROR = "%2.2fppm" % (prICAsc2Class.errppm);
+	SUMCOMPOSITION = prICAsc2Class.chemsc;
+	NAME = "prICAsc2Class [%d:%d:%d]" % (prICAsc2Class.chemsc[C] - 21 + 1, prICAsc2Class.chemsc[db] - 10, prICAsc2Class.chemsc[O] - 7);
+	INTENS = sumIntensity(prICAsc2Class.intensity);       
+	MASSFrag1 = "%4.4f" % (prAsc2Class.mass);
+	NAMEFrag1 = "prAsc2Class [%d:%d:%d]" % (prAsc2Class.chemsc[C] - 12 + 1, prAsc2Class.chemsc[db] - 3, prAsc2Class.chemsc[O] - 6);
+	INTENSFrag1 = sumIntensity(prAsc2Class.intensity);
+	Difference1 = "%1.1f" % ((prICAsc2Class.mass) - (prAsc2Class.mass));
+	SUMCOMPOSITIONFrag1 = (prICAsc2Class.chemsc - prAsc2Class.chemsc);
+	ERRORFrag1 = "%2.2fppm" % (prAsc2Class.errppm);;    ################ end script ##################

@@ -1,0 +1,25 @@
+# Identify GLUAscaroside4Class with checking  the precursor mass, GLUAscaroside4Class #
+
+QUERYNAME = GLUAscaroside4Classm73;
+DEFINE prGLUAsc4Class = 'C[16..30] H[27..55] O[10..11]' WITH DBR = (3,3.5), CHG = -1;
+DEFINE prAscs = 'C[3] H[5] O[2]' WITH CHG = -1;
+
+IDENTIFY
+	# mark GLUAsc4Class precursor mass
+	prGLUAsc4Class IN MS1- AND
+	prAscs IN MS2-
+
+SUCHTHAT
+	prGLUAsc4Class.chemsc[O] - 10 + 0 >= prGLUAsc4Class.chemsc[C] - 17 + 0
+
+
+REPORT 
+	MASS = "%4.4f" % (prGLUAsc4Class.mass);
+	ERROR = "%2.2fppm" % (prGLUAsc4Class.errppm);
+	SUMCOMPOSITION = prGLUAsc4Class.chemsc;
+	NAME = "prGLUAsc4Class [%d:%d:%d]" % (prGLUAsc4Class.chemsc[C] - 16 + 1, prGLUAsc4Class.chemsc[db] - 3, prGLUAsc4Class.chemsc[O] - 10);
+	INTENS = sumIntensity(prGLUAsc4Class.intensity);
+	INTENSm73 = prAscs.intensity;;
+
+################ end script ##################
+

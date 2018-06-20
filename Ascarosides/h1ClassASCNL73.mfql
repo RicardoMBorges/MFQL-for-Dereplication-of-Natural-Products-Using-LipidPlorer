@@ -1,0 +1,21 @@
+# Identify Ascaroside1Class # with checking  the precursor mass, Ascaroside1Class  (e.g. asc-C4/ascr#11, asc-C5/ascr#9, asc-C7/ascr#1, asc-C9/ascr10)#
+
+QUERYNAME = Ascaroside1ClassNL73;
+DEFINE Asc1Class = 'C[10..24] H[17..45] O[6..7]' WITH DBR = (2,2.5), CHG = -1;
+DEFINE prAscs = 'C[3] H[5] O[2]' WITH CHG = -1;
+
+IDENTIFY
+	# mark  precursor mass
+	Asc1Class IN MS1- AND
+	prAscs IN MS2-
+
+REPORT 
+	MASS = "%4.4f" % (Asc1Class.mass);
+	ERROR = "%2.2fppm" % (Asc1Class.errppm);
+	SUMCOMPOSITION = Asc1Class.chemsc;
+	NAME = "Asc1Class [%d:%d:%d]" % (Asc1Class.chemsc[C] - 10 + 1, Asc1Class.chemsc[db] - 2, Asc1Class.chemsc[O] - 6);
+	INTENS = sumIntensity(Asc1Class.intensity);
+	INTENSm73 = prAscs.intensity;;
+
+################ end script ##################
+

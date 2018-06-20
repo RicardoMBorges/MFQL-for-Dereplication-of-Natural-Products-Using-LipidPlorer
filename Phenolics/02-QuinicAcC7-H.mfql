@@ -1,0 +1,29 @@
+##############################################################
+# Identify QuinicAcidC7 with checking  the precursor mass, QuinicAcidC7 #
+##############################################################
+
+QUERYNAME = QuinicAcidC7H;
+DEFINE prQC7 = 'C[7..7] H[11..11] O[6..6]' WITH DBR = (2,2.5), CHG = -1;
+DEFINE QC7H2O = 'C[7] H[9] O[5]' WITH DBR = (3,3.5), CHG = -1;
+
+IDENTIFY
+
+	# mark QC7 precursor mass
+	prQC7 IN MS1- AND
+	QC7H2O IN MS2-
+SUCHTHAT
+	prQC7.chemsc[O] - 6 >= prQC7.chemsc[C] - 7
+
+REPORT 
+	MASS = "%4.4f" % (prQC7.mass);
+	ERROR = "%2.2fppm" % (prQC7.errppm);
+	SUMCOMPOSITION = prQC7.chemsc;
+	NAME = "prQC7 [%d:%d:%d]" % (prQC7.chemsc[C] - 7, prQC7.chemsc[db] - 2, prQC7.chemsc[O] - 6);	INTENS = sumIntensity(prQC7.intensity);
+	MASSFrag1 = "%4.4f" % (QC7H2O.mass);
+	NAMEFrag1 = "QC7H2O [%d:%d:%d]" % (QC7H2O.chemsc[C] - 7, QC7H2O.chemsc[db] - 3, QC7H2O.chemsc[O] - 5);
+	INTENSFrag1 = sumIntensity(QC7H2O.intensity);
+	Difference1 = "%1.1f" % ((prQC7.mass) - (QC7H2O.mass));
+	SUMCOMPOSITIONFrag1 = (prQC7.chemsc - QC7H2O.chemsc);
+	ERRORFrag1 = "%2.2fppm" % (QC7H2O.errppm);;
+
+################ end script ##################

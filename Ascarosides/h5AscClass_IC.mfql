@@ -1,0 +1,25 @@
+# Identify ICAscaroside5Class with checking  the precursor mass, ICAscaroside5Class #
+
+QUERYNAME = ICAscaroside5Classm73;
+DEFINE prICAsc5Class = 'C[28..37] H[30..48] O[8..9] N[2]' WITH DBR = (15,15.5), CHG = -1;
+DEFINE prAscs = 'C[3] H[5] O[2]' WITH CHG = -1;
+
+IDENTIFY
+	# mark ICAsc5Class precursor mass
+	prICAsc5Class IN MS1- AND
+	prAscs IN MS2-
+
+SUCHTHAT
+	prICAsc5Class.chemsc[O] - 2 + 0 >= prICAsc5Class.chemsc[C] - 28 + 0
+
+
+REPORT 
+	MASS = "%4.4f" % (prICAsc5Class.mass);
+	ERROR = "%2.2fppm" % (prICAsc5Class.errppm);
+	SUMCOMPOSITION = prICAsc5Class.chemsc;
+	NAME = "prICAsc5Class [%d:%d:%d]" % (prICAsc5Class.chemsc[C] - 28 + 1, prICAsc5Class.chemsc[db] - 15, prICAsc5Class.chemsc[O] - 8);
+	INTENS = sumIntensity(prICAsc5Class.intensity);
+	INTENSm73 = prAscs.intensity;;
+
+################ end script ##################
+

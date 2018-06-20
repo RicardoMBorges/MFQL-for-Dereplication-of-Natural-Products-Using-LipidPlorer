@@ -1,0 +1,20 @@
+# Identify Ascaroside5Class # with checking  the precursor mass, Ascaroside5Class (e.g. asc-dC7-PABA/ascr#8)#
+QUERYNAME = Ascaroside5ClassNL130;
+DEFINE prAsc5Class = 'C[19..33] H[24..52] O[7..8] N[1]' WITH DBR = (8,8.5), CHG = -1;
+DEFINE prAscs = 'C[6] H[10] O[3]' WITH CHG = 0;
+
+IDENTIFY
+	# mark Asc5Class precursor mass
+	prAsc5Class IN MS1- AND
+	prAscs IN MS2-
+
+REPORT 
+	MASS = "%4.4f" % (prAsc5Class.mass);
+	ERROR = "%2.2fppm" % (prAsc5Class.errppm);
+	SUMCOMPOSITION = prAsc5Class.chemsc;
+	NAME = "prAsc5Class [%d:%d:%d]" % (prAsc5Class.chemsc[C] - 19 + 1, prAsc5Class.chemsc[db] - 7, prAsc5Class.chemsc[O] - 7);
+	INTENS = sumIntensity(prAsc5Class.intensity);
+	NLSPIS = prAscs.intensity;;
+
+################ end script ##################
+

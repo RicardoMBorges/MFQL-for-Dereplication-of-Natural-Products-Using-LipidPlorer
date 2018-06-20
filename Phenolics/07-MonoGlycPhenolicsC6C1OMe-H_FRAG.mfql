@@ -1,0 +1,33 @@
+###################################################################################################
+# Identify MonoGlycosidePhenolicsC6C1OMe with checking  the precursor mass, MonoGlycosidePhenolicsC6C1OMe #
+###################################################################################################
+
+QUERYNAME = MonoGlycosidePhenolicsC6C1OMeH;
+DEFINE pr1GlycPHC6C1OMe = 'C[13..15] H[15..19] O[8..10]' WITH DBR = (6,6.5), CHG = -1;
+DEFINE prcPHC6C1OMe = 'C[8..9] H[7..9] O[4..5]' WITH DBR = (5,5.5), CHG = -1;
+
+IDENTIFY
+
+	# mark 1GlycPHC6C1OMe precursor mass
+	pr1GlycPHC6C1OMe IN MS1- AND
+	prcPHC6C1OMe IN MS2-
+
+SUCHTHAT
+	pr1GlycPHC6C1OMe.chemsc[O] - 8 + 1 >= pr1GlycPHC6C1OMe.chemsc[C] - 13 AND
+	prcPHC6C1OMe.chemsc[O] - 4 >= prcPHC6C1OMe.chemsc[C] - 8 AND
+	pr1GlycPHC6C1OMe.chemsc[O] - 8 >= prcPHC6C1OMe.chemsc[O] - 4 AND
+	pr1GlycPHC6C1OMe.chemsc[db] - 6 == prcPHC6C1OMe.chemsc[db] - 5
+
+REPORT 
+	MASS = "%4.4f" % (pr1GlycPHC6C1OMe.mass);
+	ERROR = "%2.2fppm" % (pr1GlycPHC6C1OMe.errppm);
+	SUMCOMPOSITION = pr1GlycPHC6C1OMe.chemsc;
+	NAME = "pr1GlycPHC6C1OMe [%d:%d:%d]" % (pr1GlycPHC6C1OMe.chemsc[C] - 13, pr1GlycPHC6C1OMe.chemsc[db] - 6, pr1GlycPHC6C1OMe.chemsc[O] - 8);	INTENS = sumIntensity(pr1GlycPHC6C1OMe.intensity);
+	MASSFrag1 = "%4.4f" % (prcPHC6C1OMe.mass);
+	NAMEFrag1 = "prcPHC6C1OMe [%d:%d:%d]" % (prcPHC6C1OMe.chemsc[C] - 8, prcPHC6C1OMe.chemsc[db] - 5, prcPHC6C1OMe.chemsc[O] - 4);
+	INTENSFrag1 = sumIntensity(prcPHC6C1OMe.intensity);
+	Difference1 = "%1.1f" % ((pr1GlycPHC6C1OMe.mass) - (prcPHC6C1OMe.mass));
+	SUMCOMPOSITIONFrag1 = (pr1GlycPHC6C1OMe.chemsc - prcPHC6C1OMe.chemsc);
+	ERRORFrag1 = "%2.2fppm" % (prcPHC6C1OMe.errppm);;
+
+################ end script ##################

@@ -1,0 +1,32 @@
+####################################################################
+# Identify CatechinC6C3C6 with checking  the precursor mass, CatechinC6C3C6 #
+####################################################################
+
+QUERYNAME = CatechinC6C3C6HRDA;
+DEFINE prCatechC6C3C6 = 'C[15..15] H[13..13] O[1..7]' WITH DBR = (9,9.5), CHG = -1;
+DEFINE CatechC6C3C6RDA = 'C[8..8] H[5..7] O[0..4]' WITH DBR = (5,6.5), CHG = -1;
+
+IDENTIFY
+
+	# mark CatechC6C3C6 precursor mass
+	prCatechC6C3C6 IN MS1- AND
+	CatechC6C3C6RDA IN MS2-
+
+SUCHTHAT
+	prCatechC6C3C6.chemsc[O] - 1 >= prCatechC6C3C6.chemsc[C] - 15
+
+REPORT
+	MASS = "%4.4f" % (prCatechC6C3C6.mass);
+	ERROR = "%2.2fppm" % (prCatechC6C3C6.errppm);
+	SUMCOMPOSITION = prCatechC6C3C6.chemsc;
+	NAME = "prCatechC6C3C6 [%d:%d:%d]" % (prCatechC6C3C6.chemsc[C] - 15, prCatechC6C3C6.chemsc[db] - 9, prCatechC6C3C6.chemsc[O] - 1);
+	INTENS = sumIntensity(prCatechC6C3C6.intensity);
+
+	MASSFrag1 = "%4.4f" % (CatechC6C3C6RDA.mass);
+	NAMEFrag1 = "CatechC6C3C6RDA [%d:%d:%d]" % (CatechC6C3C6RDA.chemsc[C] - 8, CatechC6C3C6RDA.chemsc[db] - 5, CatechC6C3C6RDA.chemsc[O] - 0);
+	INTENSFrag1 = sumIntensity(CatechC6C3C6RDA.intensity);
+	Difference1 = "%1.1f" % ((prCatechC6C3C6.mass) - (CatechC6C3C6RDA.mass));
+	SUMCOMPOSITIONFrag1 = (prCatechC6C3C6.chemsc - CatechC6C3C6RDA.chemsc);
+	ERRORFrag1 = "%2.2fppm" % (CatechC6C3C6RDA.errppm);;
+
+################ end script ##################

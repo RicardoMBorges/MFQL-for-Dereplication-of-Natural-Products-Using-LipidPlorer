@@ -1,0 +1,21 @@
+#################################################################################################
+# Identify DiGlycosideFlavonoidC6C3C6OMe with checking  the precursor mass, DiGlycosideFlavonoidC6C3C6OMe #
+#################################################################################################
+
+QUERYNAME = DiGlycFlavonoidC6C3C6OMeHMS1;
+DEFINE pr2GlyFlC6C3C6OMe = 'C[26..32] H[27..41] O[12..18]' WITH DBR = (12,13.5), CHG = -1;
+
+IDENTIFY
+
+	# mark 2GlyFlC6C3C6OMe precursor mass
+	pr2GlyFlC6C3C6OMe IN MS1-
+
+SUCHTHAT
+	pr2GlyFlC6C3C6OMe.chemsc[O] - 12 + 2 >= pr2GlyFlC6C3C6OMe.chemsc[C] - 26
+
+REPORT
+	MASS = "%4.4f" % (pr2GlyFlC6C3C6OMe.mass);
+	ERROR = "%2.2fppm" % (pr2GlyFlC6C3C6OMe.errppm);
+	SUMCOMPOSITION = pr2GlyFlC6C3C6OMe.chemsc;
+	NAME = "pr2GlyFlC6C3C6OMe [%d:%d:%d]" % (pr2GlyFlC6C3C6OMe.chemsc[C] - 26, pr2GlyFlC6C3C6OMe.chemsc[db] - 12, pr2GlyFlC6C3C6OMe.chemsc[O] - 12);	INTENS = sumIntensity(pr2GlyFlC6C3C6OMe.intensity);;
+################ end script ##################

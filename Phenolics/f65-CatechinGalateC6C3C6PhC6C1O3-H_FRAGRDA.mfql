@@ -1,0 +1,32 @@
+#########################################################################################
+# Identify CatechinGalateC6C3C6_RDA with checking  the precursor mass, CatechinGalateC6C3C6_RDA #
+#########################################################################################
+
+QUERYNAME = CatechinGalateC6C3C6HRDA;
+DEFINE prCatechGalateC6C3C6 = 'C[22..22] H[17..17] O[3..11]' WITH DBR = (14,14.5), CHG = -1;
+DEFINE prCatechC6C3C6 = 'C[15..15] H[13..13] O[1..7]' WITH DBR = (9,9.5), CHG = -1;DEFINE CatechC6C3C6RDA = 'C[8..8] H[5..7] O[0..4]' WITH DBR = (5,6.5), CHG = -1;
+
+IDENTIFY
+
+	# mark CatechGalateC6C3C6 precursor mass
+	prCatechGalateC6C3C6 IN MS1- AND
+	prCatechC6C3C6 IN MS2- AND	CatechC6C3C6RDA IN MS2-
+
+SUCHTHAT
+	prCatechGalateC6C3C6.chemsc[O] - 3 >= prCatechGalateC6C3C6.chemsc[C] - 22 AND
+	prCatechGalateC6C3C6.chemsc[db] - 14 == prCatechC6C3C6.chemsc[db] - 9
+
+REPORT
+	MASS = "%4.4f" % (prCatechGalateC6C3C6.mass);
+	ERROR = "%2.2fppm" % (prCatechGalateC6C3C6.errppm);
+	SUMCOMPOSITION = prCatechGalateC6C3C6.chemsc;
+	NAME = "prCatechGalateC6C3C6 [%d:%d:%d]" % (prCatechGalateC6C3C6.chemsc[C] - 22, prCatechGalateC6C3C6.chemsc[db] - 9, prCatechGalateC6C3C6.chemsc[O] - 3);
+	INTENS = sumIntensity(prCatechGalateC6C3C6.intensity);
+	MASSFrag1 = "%4.4f" % (prCatechC6C3C6.mass);
+	NAMEFrag1 = "prCatechC6C3C6 [%d:%d:%d]" % (prCatechC6C3C6.chemsc[C] - 15, prCatechC6C3C6.chemsc[db] - 9, prCatechC6C3C6.chemsc[O] - 1);
+	INTENSFrag1 = sumIntensity(prCatechC6C3C6.intensity);
+	Difference1 = "%1.1f" % ((prCatechGalateC6C3C6.mass) - (prCatechC6C3C6.mass));
+	SUMCOMPOSITIONFrag1 = (prCatechGalateC6C3C6.chemsc - prCatechC6C3C6.chemsc);
+	ERRORFrag1 = "%2.2fppm" % (prCatechC6C3C6.errppm);	MASSFrag2 = "%4.4f" % (CatechC6C3C6RDA.mass);	NAMEFrag2 = "CatechC6C3C6RDA [%d:%d:%d]" % (CatechC6C3C6RDA.chemsc[C] - 8, CatechC6C3C6RDA.chemsc[db] - 5, CatechC6C3C6RDA.chemsc[O] - 0);	INTENSFrag2 = sumIntensity(CatechC6C3C6RDA.intensity);	Difference2 = "%1.1f" % ((prCatechC6C3C6.mass) - (CatechC6C3C6RDA.mass));	SUMCOMPOSITIONFrag2 = (prCatechC6C3C6.chemsc - CatechC6C3C6RDA.chemsc);	ERRORFrag2 = "%2.2fppm" % (CatechC6C3C6RDA.errppm);;
+
+################ end script ##################

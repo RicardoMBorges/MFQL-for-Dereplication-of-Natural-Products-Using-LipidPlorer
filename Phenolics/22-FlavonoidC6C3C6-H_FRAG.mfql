@@ -1,0 +1,33 @@
+#############################################################################
+# Identify FlavonoidC6C3C6 with checking  the precursor mass, FlavonoidC6C3C6 #
+#############################################################################
+
+QUERYNAME = FlavonoidC6C3C6;
+DEFINE prFlC6C3C6 = 'C[15..15] H[9..13] O[2..8]' WITH DBR = (10,11.5), CHG = -1;
+DEFINE FlC6C3C6RDA = 'C[8..8] H[5..7] O[0..4]' WITH DBR = (5,6.5), CHG = -1;
+
+IDENTIFY
+
+	# mark FlC6C3C6 precursor mass
+	prFlC6C3C6 IN MS1- AND
+	FlC6C3C6RDA IN MS2-
+
+SUCHTHAT
+	prFlC6C3C6.chemsc[O] - 2 >= prFlC6C3C6.chemsc[C] - 15 AND
+	prFlC6C3C6.chemsc[O] - 2 >= FlC6C3C6RDA.chemsc[O] - 0
+
+REPORT
+	MASS = "%4.4f" % (prFlC6C3C6.mass);
+	ERROR = "%2.2fppm" % (prFlC6C3C6.errppm);
+	SUMCOMPOSITION = prFlC6C3C6.chemsc;
+	NAME = "prFlC6C3C6 [%d:%d:%d]" % (prFlC6C3C6.chemsc[C] - 15, prFlC6C3C6.chemsc[db] - 10, prFlC6C3C6.chemsc[O] - 2);	INTENS = sumIntensity(prFlC6C3C6.intensity);
+
+	MASSFrag1 = "%4.4f" % (FlC6C3C6RDA.mass);
+	NAMEFrag1 = "FlC6C3C6RDA [%d:%d:%d]" % (FlC6C3C6RDA.chemsc[C] - 8, FlC6C3C6RDA.chemsc[db] - 5, FlC6C3C6RDA.chemsc[O] - 0);
+	INTENSFrag1 = sumIntensity(FlC6C3C6RDA.intensity);
+	Difference1 = "%1.1f" % ((prFlC6C3C6.mass) - (FlC6C3C6RDA.mass));
+	SUMCOMPOSITIONFrag1 = (prFlC6C3C6.chemsc - FlC6C3C6RDA.chemsc);
+	ERRORFrag1 = "%2.2fppm" % (FlC6C3C6RDA.errppm);;
+
+
+################ end script ##################

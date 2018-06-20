@@ -1,0 +1,41 @@
+######################################################################################################################
+# Identify MonoGlycosideFlavonoidC6C3C6PhenolicC6C1Directlink with checking  the precursor mass, MonoGlycosideFlavonoidC6C3C6PhenolicC6C1Directlink #
+######################################################################################################################
+
+QUERYNAME = MonoGlycFlavonoidC6C3C6PhC6C1DirectlinkH;
+DEFINE pr1GlyFlC6C3C6PhC6C1 = 'C[27..28] H[21..25] O[9..17]' WITH DBR = (16,17.5), CHG = -1;
+DEFINE prFlC6C3C6PhC6C1 = 'C[22..22] H[13..15] O[5..12]' WITH DBR = (15,16.5), CHG = -1;
+DEFINE prcFlC6C3C6 = 'C[15..15] H[9..13] O[3..8]' WITH DBR = (10,11.5), CHG = -1;
+
+IDENTIFY
+
+	# mark 1GlyFlC6C3C6PhC6C1 precursor mass
+	pr1GlyFlC6C3C6PhC6C1 IN MS1- AND
+	prFlC6C3C6PhC6C1 IN MS2- AND
+	prcFlC6C3C6 IN MS2-
+SUCHTHAT
+	pr1GlyFlC6C3C6PhC6C1.chemsc[O] - 9 + 1 >= pr1GlyFlC6C3C6PhC6C1.chemsc[C] - 27 AND
+	prFlC6C3C6PhC6C1.chemsc[O] - 5 >= prFlC6C3C6PhC6C1.chemsc[C] - 22 AND
+	prcFlC6C3C6.chemsc[O] - 2 >= prcFlC6C3C6.chemsc[C] - 15 AND
+	prcFlC6C3C6.chemsc[db] - 10 >= pr1GlyFlC6C3C6PhC6C1.chemsc[db] - 16
+
+REPORT
+	MASS = "%4.4f" % (pr1GlyFlC6C3C6PhC6C1.mass);
+	ERROR = "%2.2fppm" % (pr1GlyFlC6C3C6PhC6C1.errppm);
+	SUMCOMPOSITION = pr1GlyFlC6C3C6PhC6C1.chemsc;
+	NAME = "pr1GlyFlC6C3C6PhC6C1 [%d:%d:%d]" % (pr1GlyFlC6C3C6PhC6C1.chemsc[C] - 27, pr1GlyFlC6C3C6PhC6C1.chemsc[db] - 16, pr1GlyFlC6C3C6PhC6C1.chemsc[O] - 9);	INTENS = sumIntensity(pr1GlyFlC6C3C6PhC6C1.intensity);
+	MASSFrag1 = "%4.4f" % (prFlC6C3C6PhC6C1.mass);
+	NAMEFrag1 = "prFlC6C3C6PhC6C1 [%d:%d:%d]" % (prFlC6C3C6PhC6C1.chemsc[C] - 22, prFlC6C3C6PhC6C1.chemsc[db] - 15, prFlC6C3C6PhC6C1.chemsc[O] - 5);
+	INTENSFrag1 = sumIntensity(prFlC6C3C6PhC6C1.intensity);
+	Difference1 = "%1.1f" % ((pr1GlyFlC6C3C6PhC6C1.mass) - (prFlC6C3C6PhC6C1.mass));
+	SUMCOMPOSITIONFrag1 = (pr1GlyFlC6C3C6PhC6C1.chemsc - prFlC6C3C6PhC6C1.chemsc);
+	ERRORFrag1 = "%2.2fppm" % (prFlC6C3C6PhC6C1.errppm);
+
+	MASSFrag2 = "%4.4f" % (prcFlC6C3C6.mass);
+	NAMEFrag2 = "prcFlC6C3C6 [%d:%d:%d]" % (prcFlC6C3C6.chemsc[C] - 15, prcFlC6C3C6.chemsc[db] - 10, prcFlC6C3C6.chemsc[O] - 3);
+	INTENSFrag2 = sumIntensity(prcFlC6C3C6.intensity);
+	Difference2 = "%1.1f" % ((prFlC6C3C6PhC6C1.mass) - (prcFlC6C3C6.mass));
+	SUMCOMPOSITIONFrag2 = (prFlC6C3C6PhC6C1.chemsc - prcFlC6C3C6.chemsc);
+	ERRORFrag2 = "%2.2fppm" % (prcFlC6C3C6.errppm);;
+
+################ end script ##################

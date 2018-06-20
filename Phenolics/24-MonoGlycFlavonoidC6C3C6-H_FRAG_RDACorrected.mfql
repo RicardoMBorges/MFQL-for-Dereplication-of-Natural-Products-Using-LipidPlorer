@@ -1,0 +1,42 @@
+#################################################################################################
+# Identify MonoGlycosideFlavonoidC6C3C6 with checking  the precursor mass, MonoGlycosideFlavonoidC6C3C6 #
+#################################################################################################
+
+QUERYNAME = MonoGlycFlavonoidC6C3C6H;
+DEFINE pr1GlyFlC6C3C6 = 'C[20..21] H[17..21] O[7..13]' WITH DBR = (11,12.5), CHG = -1;
+DEFINE prcFlC6C3C6 = 'C[15..15] H[9..13] O[3..8]' WITH DBR = (10,11.5), CHG = -1;
+DEFINE FlC6C3C6RDA = 'C[8..8] H[5..7] O[0..4]' WITH DBR = (5,6.5), CHG = -1;
+
+IDENTIFY	# mark 1GlyFlC6C3C6 precursor mass
+	pr1GlyFlC6C3C6 IN MS1- AND
+	prcFlC6C3C6 IN MS2- AND
+	FlC6C3C6RDA IN MS2- 
+
+SUCHTHAT
+	pr1GlyFlC6C3C6.chemsc[O] - 7 + 1 >= pr1GlyFlC6C3C6.chemsc[C] - 20 AND
+	prcFlC6C3C6.chemsc[O] - 3 >= prcFlC6C3C6.chemsc[C] - 15 AND
+	pr1GlyFlC6C3C6.chemsc[O] - 7 >= prcFlC6C3C6.chemsc[O] - 3 AND
+	pr1GlyFlC6C3C6.chemsc[db] - 11 == prcFlC6C3C6.chemsc[db] - 10
+
+REPORT
+	MASS = "%4.4f" % (pr1GlyFlC6C3C6.mass);
+	ERROR = "%2.2fppm" % (pr1GlyFlC6C3C6.errppm);
+	SUMCOMPOSITION = pr1GlyFlC6C3C6.chemsc;
+	NAME = "pr1GlyFlC6C3C6 [%d:%d:%d]" % (pr1GlyFlC6C3C6.chemsc[C] - 20, pr1GlyFlC6C3C6.chemsc[db] - 11, pr1GlyFlC6C3C6.chemsc[O] - 7);	INTENS = sumIntensity(pr1GlyFlC6C3C6.intensity);
+	
+	MASSFrag1 = "%4.4f" % (prcFlC6C3C6.mass);
+	NAMEFrag1 = "prcFlC6C3C6 [%d:%d:%d]" % (prcFlC6C3C6.chemsc[C] - 15, prcFlC6C3C6.chemsc[db] - 10, prcFlC6C3C6.chemsc[O] - 3);
+	INTENSFrag1 = sumIntensity(prcFlC6C3C6.intensity);
+	Difference1 = "%1.1f" % ((pr1GlyFlC6C3C6.mass) - (prcFlC6C3C6.mass));
+	SUMCOMPOSITIONFrag1 = (pr1GlyFlC6C3C6.chemsc - prcFlC6C3C6.chemsc);
+	ERRORFrag1 = "%2.2fppm" % (prcFlC6C3C6.errppm);
+;
+#	MASSFrag2 = "%4.4f" % (FlC6C3C6RDA.mass);
+#	MASSFrag2 = "%4.4f" % (FlC6C3C6RDA.mass);;
+#	NAMEFrag2 = "FlC6C3C6RDA [%d:%d:%d]" % (FlC6C3C6RDA.chemsc[C] - 8, FlC6C3C6RDA.chemsc[db] - 5, FlC6C3C6RDA.chemsc[O]);
+#	INTENSFrag2 = sumIntensity(FlC6C3C6RDA.intensity);
+#	Difference2 = "%1.1f" % ((prcFlC6C3C6.mass) - (FlC6C3C6RDA.mass));
+#	SUMCOMPOSITIONFrag2 = (prcFlC6C3C6.chemsc - FlC6C3C6RDA.chemsc);
+#	ERRORFrag2 = "%2.2fppm" % (FlC6C3C6RDA.errppm);;
+
+################ end script ##################

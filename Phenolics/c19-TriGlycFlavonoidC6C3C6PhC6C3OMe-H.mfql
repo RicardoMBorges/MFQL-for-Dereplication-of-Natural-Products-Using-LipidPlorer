@@ -1,0 +1,61 @@
+###########################################################################################################################
+# Identify TriGlycosideFlavonoidC6C3C6PhenolicsC6C3OMeDirectlink with checking  the precursor mass, TriGlycosideFlavonoidC6C3C6PhenolicsC6C3OMeDirectlink #
+###########################################################################################################################
+
+QUERYNAME = TriGlycFlavonoidC6C3C6PhC6C3OMeDirectlinkH;
+DEFINE pr3GlyFlC6C3C6PhC6C3OMe = 'C[40..50] H[41..63] O[18..27]' WITH DBR = (19,20.5), CHG = -1;
+DEFINE pr2GlyFlC6C3C6PhC6C3OMe = 'C[35..44] H[33..53] O[14..22]' WITH DBR = (18,19.5), CHG = -1;
+DEFINE pr1GlyFlC6C3C6PhC6C3OMe = 'C[30..38] H[25..43] O[10..17]' WITH DBR = (17,18.5), CHG = -1;
+DEFINE prFlC6C3C6PhC6C3OMe = 'C[25..29] H[15..27] O[5..12]' WITH DBR = (16,17.5), CHG = -1;
+DEFINE prcFlC6C3C6OMe = 'C[16..21] H[11..23] O[4..8]' WITH DBR = (10,11.5), CHG = -1;
+
+IDENTIFY
+
+	# mark 3GlyFlC6C3C6PhC6C3OMe precursor mass
+	pr3GlyFlC6C3C6PhC6C3OMe IN MS1- AND
+	pr2GlyFlC6C3C6PhC6C3OMe IN MS2- AND
+	pr1GlyFlC6C3C6PhC6C3OMe IN MS2- AND
+	prFlC6C3C6PhC6C3OMe IN MS2- AND
+	prcFlC6C3C6OMe IN MS2-
+SUCHTHAT
+	pr3GlyFlC6C3C6PhC6C3OMe.chemsc[O] - 18 + 3 >= pr3GlyFlC6C3C6PhC6C3OMe.chemsc[C] - 40 AND
+	pr2GlyFlC6C3C6PhC6C3OMe.chemsc[O] - 14 + 2 >= pr2GlyFlC6C3C6PhC6C3OMe.chemsc[C] - 35 AND
+	pr1GlyFlC6C3C6PhC6C3OMe.chemsc[O] - 10 + 1 >= pr1GlyFlC6C3C6PhC6C3OMe.chemsc[C] - 30 AND
+	prFlC6C3C6PhC6C3OMe.chemsc[O] - 5 >= prFlC6C3C6PhC6C3OMe.chemsc[C] - 25 AND
+	prcFlC6C3C6OMe.chemsc[O] - 3 >= prcFlC6C3C6OMe.chemsc[C] - 16 AND
+	prcFlC6C3C6OMe.chemsc[db] - 10 >= pr3GlyFlC6C3C6PhC6C3OMe.chemsc[db] - 19
+
+REPORT
+	MASS = "%4.4f" % (pr3GlyFlC6C3C6PhC6C3OMe.mass);
+	ERROR = "%2.2fppm" % (pr3GlyFlC6C3C6PhC6C3OMe.errppm);
+	SUMCOMPOSITION = pr3GlyFlC6C3C6PhC6C3OMe.chemsc;
+	NAME = "pr3GlyFlC6C3C6PhC6C3OMe [%d:%d:%d]" % (pr3GlyFlC6C3C6PhC6C3OMe.chemsc[C] - 40, pr3GlyFlC6C3C6PhC6C3OMe.chemsc[db] - 19, pr3GlyFlC6C3C6PhC6C3OMe.chemsc[O] - 18);	INTENS = sumIntensity(pr3GlyFlC6C3C6PhC6C3OMe.intensity);
+	MASSFrag1 = "%4.4f" % (pr2GlyFlC6C3C6PhC6C3OMe.mass);
+	NAMEFrag1 = "pr2GlyFlC6C3C6PhC6C3OMe [%d:%d:%d]" % (pr2GlyFlC6C3C6PhC6C3OMe.chemsc[C] - 35, pr2GlyFlC6C3C6PhC6C3OMe.chemsc[db] - 18, pr2GlyFlC6C3C6PhC6C3OMe.chemsc[O] - 14);
+	INTENSFrag1 = sumIntensity(pr2GlyFlC6C3C6PhC6C3OMe.intensity);
+	Difference1 = "%1.1f" % ((pr3GlyFlC6C3C6PhC6C3OMe.mass) - (pr2GlyFlC6C3C6PhC6C3OMe.mass));
+	SUMCOMPOSITIONFrag1 = (pr3GlyFlC6C3C6PhC6C3OMe.chemsc - pr2GlyFlC6C3C6PhC6C3OMe.chemsc);
+	ERRORFrag1 = "%2.2fppm" % (pr2GlyFlC6C3C6PhC6C3OMe.errppm);
+
+	MASSFrag2 = "%4.4f" % (pr1GlyFlC6C3C6PhC6C3OMe.mass);
+	NAMEFrag2 = "pr1GlyFlC6C3C6PhC6C3OMe [%d:%d:%d]" % (pr1GlyFlC6C3C6PhC6C3OMe.chemsc[C] - 30, pr1GlyFlC6C3C6PhC6C3OMe.chemsc[db] - 17, pr1GlyFlC6C3C6PhC6C3OMe.chemsc[O] - 10);
+	INTENSFrag2 = sumIntensity(pr1GlyFlC6C3C6PhC6C3OMe.intensity);
+	Difference2 = "%1.1f" % ((pr2GlyFlC6C3C6PhC6C3OMe.mass) - (pr1GlyFlC6C3C6PhC6C3OMe.mass));
+	SUMCOMPOSITIONFrag2 = (pr2GlyFlC6C3C6PhC6C3OMe.chemsc - pr1GlyFlC6C3C6PhC6C3OMe.chemsc);
+	ERRORFrag2 = "%2.2fppm" % (pr1GlyFlC6C3C6PhC6C3OMe.errppm);
+
+	MASSFrag3 = "%4.4f" % (prFlC6C3C6PhC6C3OMe.mass);
+	NAMEFrag3 = "prFlC6C3C6PhC6C3OMe [%d:%d:%d]" % (prFlC6C3C6PhC6C3OMe.chemsc[C] - 25, prFlC6C3C6PhC6C3OMe.chemsc[db] - 16, prFlC6C3C6PhC6C3OMe.chemsc[O] - 5);
+	INTENSFrag3 = sumIntensity(prFlC6C3C6PhC6C3OMe.intensity);
+	Difference3 = ((pr1GlyFlC6C3C6PhC6C3OMe.mass) - (prFlC6C3C6PhC6C3OMe.mass));
+	SUMCOMPOSITIONFrag3 = (pr1GlyFlC6C3C6PhC6C3OMe.chemsc - prFlC6C3C6PhC6C3OMe.chemsc);
+	ERRORFrag3 = "%2.2fppm" % (prFlC6C3C6PhC6C3OMe.errppm);
+
+	MASSFrag4 = "%4.4f" % (prcFlC6C3C6OMe.mass);
+	NAMEFrag4 = "prcFlC6C3C6OMe [%d:%d:%d]" % (prcFlC6C3C6OMe.chemsc[C] - 16, prcFlC6C3C6OMe.chemsc[db] - 10, prcFlC6C3C6OMe.chemsc[O] - 4);
+	INTENSFrag4 = sumIntensity(prcFlC6C3C6OMe.intensity);
+	Difference4 = ((pr1GlyFlC6C3C6PhC6C3OMe.mass) - (prcFlC6C3C6OMe.mass));
+	SUMCOMPOSITIONFrag3 = (pr1GlyFlC6C3C6PhC6C3OMe.chemsc - prcFlC6C3C6OMe.chemsc);
+	ERRORFrag3 = "%2.2fppm" % (prcFlC6C3C6OMe.errppm);;
+
+################ end script ##################

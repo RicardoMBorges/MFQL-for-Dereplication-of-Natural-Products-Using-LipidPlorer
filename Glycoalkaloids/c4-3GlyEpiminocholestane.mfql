@@ -1,0 +1,26 @@
+# Identify 3GlycEtioline # with checking  the precursor mass, 3GlycEtioline #
+QUERYNAME = TriGlycEpiminocholestane;
+DEFINE pr3GlyEpiminocholestane = 'C[42..45] H[68..76] O[13..18] N[1..1]' WITH DBR = (8.5,10.5), CHG = +1;
+DEFINE Epiminocholestane = 'C[27..27] H[44..46] O[1..3] N[1..1]' WITH DBR = (5.5,8.5), CHG = +1;
+
+IDENTIFY
+	# mark 3GlyEtioline precursor mass
+	pr3GlyEpiminocholestane IN MS1+ AND
+	Epiminocholestane IN MS2+
+
+
+REPORT 
+	MASS = "%4.4f" % (pr3GlyEpiminocholestane.mass);
+	ERROR = "%2.2fppm" % (pr3GlyEpiminocholestane.errppm);
+	SUMCOMPOSITION = pr3GlyEpiminocholestane.chemsc;
+	NAME = "pr3GlyEpiminocholestane [%d:%d:%d]" % (pr3GlyEpiminocholestane.chemsc[C] - 42, pr3GlyEpiminocholestane.chemsc[db] - 8.5, pr3GlyEpiminocholestane.chemsc[O] - 13);
+	INTENS = sumIntensity(pr3GlyEpiminocholestane.intensity);
+
+	MASSFrag = "%4.4f" % (Epiminocholestane.mass);
+	NAMEFrag = "Epiminocholestane [%d:%d:%d]" % (Epiminocholestane.chemsc[C] - 27, Epiminocholestane.chemsc[db] - 5.5, Epiminocholestane.chemsc[O] - 1);
+	INTENSFrag = sumIntensity(Epiminocholestane.intensity);
+	Difference = ((pr3GlyEpiminocholestane.mass) - (Epiminocholestane.mass));
+	SUMCOMPOSITIONFrag = (pr3GlyEpiminocholestane.chemsc - Epiminocholestane.chemsc);
+	ERRORFrag = "%2.2fppm" % (Epiminocholestane.errppm);;
+
+################ end script ##################

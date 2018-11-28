@@ -1,0 +1,17 @@
+# Identify Solasodine # with checking  the precursor mass, Solasodine #
+QUERYNAME = Spirosolane;
+DEFINE Spirosolane = 'C[27..27] H[44..46] O[2..3] N[1..1]' WITH DBR = (5.5,7.5), CHG = +1;
+
+IDENTIFY
+	# mark  precursor mass
+	Spirosolane IN MS1+ 
+
+REPORT 
+	MASS = "%4.4f" % (Spirosolane.mass);
+	ERROR = "%2.2fppm" % (Spirosolane.errppm);
+	SUMCOMPOSITION = Spirosolane.chemsc;
+	NAME = "Spirosolane [%d:%d:%d]" % (Spirosolane.chemsc[C] - 27, Spirosolane.chemsc[db] - 5.5, Spirosolane.chemsc[O] - 2);
+	INTENS = sumIntensity(Spirosolane.intensity);;
+
+################ end script ##################
+

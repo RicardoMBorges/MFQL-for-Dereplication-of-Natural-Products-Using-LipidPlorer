@@ -1,0 +1,16 @@
+# Identify Demissidine # with checking  the precursor mass, Demissidine #
+QUERYNAME = Solanidane;
+DEFINE Solanidane = 'C[27..27] H[44..46] O[1..2] N[1..1]' WITH DBR = (5.5,7.5), CHG = +1;
+
+IDENTIFY
+	# mark  precursor mass
+	Solanidane IN MS1+
+
+REPORT
+	MASS = "%4.4f" % (Solanidane.mass);
+	ERROR = "%2.2fppm" % (Solanidane.errppm);
+	SUMCOMPOSITION = Solanidane.chemsc;
+	NAME = "Solanidane [%d:%d:%d]" % (Solanidane.chemsc[C] - 27, Solanidane.chemsc[db] - 5.5, Solanidane.chemsc[O] - 1);
+	INTENS = sumIntensity(Solanidane.intensity);;
+
+################ end script ##################

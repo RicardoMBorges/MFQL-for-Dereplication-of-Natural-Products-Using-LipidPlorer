@@ -1,0 +1,29 @@
+# Identify MonoGlySolasodine # with checking  the precursor mass, MonoGlySolasodine
+QUERYNAME = MonoGlySpirosolaneAcetato;
+DEFINE pr1GlySpirosolaneAcet = 'C[34..35] H[54..60] O[7..9] N[1..1]' WITH DBR = (7.5,9.5), CHG = +1;
+DEFINE Spirosolane = 'C[27..27] H[44..46] O[2..3] N[1..1]' WITH DBR = (5.5,7.5), CHG = +1;
+
+IDENTIFY
+	# mark  precursor mass
+	pr1GlySpirosolaneAcet IN MS1+ AND
+	Spirosolane IN MS2+ 
+
+SUCHTHAT
+Spirosolane.chemsc[db] - 5.5 == pr1GlySpirosolaneAcet.chemsc[db] - 7.5
+
+REPORT 
+	MASS = "%4.4f" % (pr1GlySpirosolaneAcet.mass);
+	ERROR = "%2.2fppm" % (pr1GlySpirosolaneAcet.errppm);
+	SUMCOMPOSITION = pr1GlySpirosolaneAcet.chemsc;
+	NAME = "pr1GlySpirosolaneAcet [%d:%d:%d]" % (pr1GlySpirosolaneAcet.chemsc[C] - 34, pr1GlySpirosolaneAcet.chemsc[db] - 7.5, pr1GlySpirosolaneAcet.chemsc[O] - 7);
+	INTENS = sumIntensity(pr1GlySpirosolaneAcet.intensity);
+
+	MASSFrag = "%4.4f" % (Spirosolane.mass);
+	NAMEFrag = "Spirosolane [%d:%d:%d]" % (Spirosolane.chemsc[C] - 27, Spirosolane.chemsc[db] - 5.5, Spirosolane.chemsc[O] - 2);
+	INTENSFrag = sumIntensity(Spirosolane.intensity);
+	Difference = ((pr1GlySpirosolaneAcet.mass) - (Spirosolane.mass));
+	SUMCOMPOSITIONFrag = (pr1GlySpirosolaneAcet.chemsc - Spirosolane.chemsc);
+	ERRORFrag = "%2.2fppm" % (Spirosolane.errppm);;
+
+################ end script ##################
+

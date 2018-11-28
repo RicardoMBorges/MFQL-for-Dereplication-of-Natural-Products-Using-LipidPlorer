@@ -1,0 +1,28 @@
+# Identify 5GlyDemissidine # with checking  the precursor mass, 5GlyDemissidine #
+QUERYNAME = PentaGlySolanidane;
+DEFINE pr5GlySolanidane = 'C[52..57] H[84..96] O[21..27] N[1..1]' WITH DBR = (10.5,12.5), CHG = +1;
+DEFINE Solanidane = 'C[27..27] H[44..46] O[1..2] N[1..1]' WITH DBR = (5.5,7.5), CHG = +1;
+
+IDENTIFY
+	# mark 5GlyDemissidine precursor mass
+	pr5GlySolanidane IN MS1+ AND
+	Solanidane IN MS2+
+
+SUCHTHAT
+Solanidane.chemsc[db] - 5.5 == pr5GlySolanidane.chemsc[db] - 10.5
+
+REPORT 
+	MASS = "%4.4f" % (pr5GlySolanidane.mass);
+	ERROR = "%2.2fppm" % (pr5GlySolanidane.errppm);
+	SUMCOMPOSITION = pr5GlySolanidane.chemsc;
+	NAME = "pr5GlySolanidane [%d:%d:%d]" % (pr5GlySolanidane.chemsc[C] - 57, pr5GlySolanidane.chemsc[db] - 10.5, pr5GlySolanidane.chemsc[O] - 21);
+	INTENS = sumIntensity(pr5GlySolanidane.intensity);
+
+	MASSFrag = "%4.4f" % (Solanidane.mass);
+	NAMEFrag = "Solanidane [%d:%d:%d]" % (Solanidane.chemsc[C] - 27, Solanidane.chemsc[db] - 5.5, Solanidane.chemsc[O] - 1);
+	INTENSFrag = sumIntensity(Solanidane.intensity);
+	Difference = ((pr5GlySolanidane.mass) - (Solanidane.mass));
+	SUMCOMPOSITIONFrag = (pr5GlySolanidane.chemsc - Solanidane.chemsc);
+	ERRORFrag = "%2.2fppm" % (Solanidane.errppm);;
+
+################ end script ##################

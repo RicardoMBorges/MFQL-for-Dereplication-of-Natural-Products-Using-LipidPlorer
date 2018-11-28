@@ -1,0 +1,28 @@
+# Identify 1GlyTeinemine # with checking  the precursor mass, 1GlyTeinemine #
+QUERYNAME = MonoGlySecoSpirostaneAcetate;
+DEFINE pr1GlySecoSpirostaneAcet = 'C[34..35] H[56..60] O[6..9] N[1..1]' WITH DBR = (6.5,8.5), CHG = +1;
+DEFINE SecoSpirostane = 'C[27..27] H[46..48] O[1..3] N[1..1]' WITH DBR = (4.5,6.5), CHG = +1;
+
+IDENTIFY
+	# mark 1GlyTeinemine precursor mass
+	pr1GlySecoSpirostaneAcet IN MS1+ AND
+	SecoSpirostane IN MS2+ 
+
+SUCHTHAT
+SecoSpirostane.chemsc[db] - 4.5 == pr1GlySecoSpirostaneAcet.chemsc[db] - 6.5
+
+REPORT 
+	MASS = "%4.4f" % (pr1GlySecoSpirostaneAcet.mass);
+	ERROR = "%2.2fppm" % (pr1GlySecoSpirostaneAcet.errppm);
+	SUMCOMPOSITION = pr1GlySecoSpirostaneAcet.chemsc;
+	NAME = "pr1GlySecoSpirostaneAcet [%d:%d:%d]" % (pr1GlySecoSpirostaneAcet.chemsc[C] - 34, pr1GlySecoSpirostaneAcet.chemsc[db] - 6.5, pr1GlySecoSpirostaneAcet.chemsc[O] - 6);
+	INTENS = sumIntensity(pr1GlySecoSpirostaneAcet.intensity);
+
+	MASSFrag = "%4.4f" % (SecoSpirostane.mass);
+	NAMEFrag = "SecoSpirostane [%d:%d:%d]" % (SecoSpirostane.chemsc[C] - 27, SecoSpirostane.chemsc[db] - 4.5, SecoSpirostane.chemsc[O] - 1);
+	INTENSFrag = sumIntensity(SecoSpirostane.intensity);
+	Difference = ((pr1GlySecoSpirostaneAcet.mass) - (SecoSpirostane.mass));
+	SUMCOMPOSITIONFrag = (pr1GlySecoSpirostaneAcet.chemsc - SecoSpirostane.chemsc);
+	ERRORFrag = "%2.2fppm" % (SecoSpirostane.errppm);;
+
+################ end script ##################

@@ -1,0 +1,16 @@
+# Identify Teinemine # with checking  the precursor mass, Teinemine #
+QUERYNAME = SecoSpirostane;
+DEFINE SecoSpirostane = 'C[27..27] H[46..48] O[1..3] N[1..1]' WITH DBR = (4.5,6.5), CHG = +1;
+
+IDENTIFY
+	# mark  precursor mass
+	SecoSpirostane IN MS1+ 
+
+REPORT 
+	MASS = "%4.4f" % (SecoSpirostane.mass);
+	ERROR = "%2.2fppm" % (SecoSpirostane.errppm);
+	SUMCOMPOSITION = SecoSpirostane.chemsc;
+	NAME = "SecoSpirostane [%d:%d:%d]" % (SecoSpirostane.chemsc[C] - 27, SecoSpirostane.chemsc[db] - 4.5, SecoSpirostane.chemsc[O] - 1);
+	INTENS = sumIntensity(SecoSpirostane.intensity);;
+
+################ end script ##################

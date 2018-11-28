@@ -1,0 +1,16 @@
+# Identify Etioline # with checking  the precursor mass, Etioline #
+QUERYNAME = Epiminocholestane;
+DEFINE Epiminocholestane = 'C[27..27] H[44..46] O[1..3] N[1..1]' WITH DBR = (5.5,8.5), CHG = +1;
+
+IDENTIFY
+	# mark  precurso+
+	Epiminocholestane IN MS1+
+
+REPORT
+	MASS = "%4.4f" % (Epiminocholestane.mass);
+	ERROR = "%2.2fppm" % (Epiminocholestane.errppm);
+	SUMCOMPOSITION = Epiminocholestane.chemsc;
+	NAME = "Epiminocholestane [%d:%d:%d]" % (Epiminocholestane.chemsc[C] - 27, Epiminocholestane.chemsc[db] - 5.5, Epiminocholestane.chemsc[O] - 1);
+	INTENS = sumIntensity(Epiminocholestane.intensity);;
+
+################ end script ##################
